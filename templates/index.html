@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard - Library MS{% endblock %}
+{% block content %}
+    <h1>Dashboard</h1>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ total_books }}</div>
+            <div class="stat-label">Book Titles</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ total_copies }}</div>
+            <div class="stat-label">Total Copies</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ available_copies }}</div>
+            <div class="stat-label">Available Copies</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ total_members }}</div>
+            <div class="stat-label">Members</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ issued_count }}</div>
+            <div class="stat-label">Books Issued</div>
+        </div>
+        <div class="stat-card {% if overdue_count > 0 %}stat-warning{% endif %}">
+            <div class="stat-value">{{ overdue_count }}</div>
+            <div class="stat-label">Overdue</div>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <a href="{{ url_for('add_book') }}" class="btn btn-primary">+ Add Book</a>
+        <a href="{{ url_for('add_member') }}" class="btn btn-primary">+ Add Member</a>
+        <a href="{{ url_for('issue_book') }}" class="btn btn-primary">Issue a Book</a>
+    </div>
+{% endblock %}

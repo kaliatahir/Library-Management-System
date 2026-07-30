@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Members - Library MS{% endblock %}
+{% block content %}
+    <div class="page-header">
+        <h1>Members</h1>
+        <a href="{{ url_for('add_member') }}" class="btn btn-primary">+ Add Member</a>
+    </div>
+
+    <form method="get" class="search-form">
+        <input type="text" name="q" placeholder="Search by name or email..." value="{{ query }}">
+        <button type="submit" class="btn">Search</button>
+        {% if query %}<a href="{{ url_for('members') }}" class="btn btn-secondary">Clear</a>{% endif %}
+    </form>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Member Since</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for member in members %}
+            <tr>
+                <td>{{ member.name }}</td>
+                <td>{{ member.email }}</td>
+                <td>{{ member.phone }}</td>
+                <td>{{ member.membership_date }}</td>
+                <td class="actions">
+                    <a href="{{ url_for('delete_member', member_id=member.id) }}"
+   class="confirm-action text-danger"
+   data-confirm-message="Remove this member? This cannot be undone.">Delete</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="empty-state">No members found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

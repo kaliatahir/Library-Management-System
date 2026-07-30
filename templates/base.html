@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}BookNest{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        // Apply saved theme immediately, before the page renders, to avoid a flash
+        (function() {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">📚 BookNest</div>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('books') }}">Books</a>
+            <a href="{{ url_for('members') }}">Members</a>
+            <a href="{{ url_for('issue_book') }}">Issue Book</a>
+            <a href="{{ url_for('transactions') }}">Transactions</a>
+            <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+            <button id="theme-toggle" class="theme-toggle-btn" title="Toggle dark mode">🌙</button>
+        </div>
+    </nav>
+
+    <main class="container">
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Reusable confirm modal -->
+    <div id="confirm-modal-overlay" class="modal-overlay">
+        <div class="modal-box">
+            <p id="confirm-modal-message">Are you sure?</p>
+            <div class="modal-actions">
+                <button type="button" id="confirm-modal-cancel" class="btn btn-secondary">Cancel</button>
+                <a href="#" id="confirm-modal-confirm" class="btn btn-danger">Confirm</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

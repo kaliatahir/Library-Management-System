@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Transactions - Library MS{% endblock %}
+{% block content %}
+    <h1>Transactions</h1>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Member</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Return Date</th>
+                <th>Status</th>
+                <th>Fine</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in transactions %}
+            {% set is_overdue = t.status == 'Issued' and t.due_date < today %}
+            <tr class="{% if is_overdue %}row-overdue{% endif %}">
+                <td>{{ t.book.title }}</td>
+                <td>{{ t.member.name }}</td>
+                <td>{{ t.issue_date }}</td>
+                <td>{{ t.due_date }}</td>
+                <td>{{ t.return_date or '—' }}</td>
+                <td>
+                    {% if is_overdue %}
+                        <span class="badge badge-danger">Overdue</span>
+                    {% elif t.status == 'Issued' %}
+                        <span class="badge badge-info">Issued</span>
+                    {% else %}
+                        <span class="badge badge-success">Returned</span>
+                    {% endif %}
+                </td>
+                <td>{{ t.fine_amount if t.fine_amount else '—' }}</td>
+                <td class="actions">
+                    {% if t.status == 'Issued' %}
+                        <a href="{{ url_for('return_book', transaction_id=t.id) }}"
+   class="confirm-action"
+   data-confirm-message="Mark this book as returned?">Return</a>
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="8" class="empty-state">No transactions yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

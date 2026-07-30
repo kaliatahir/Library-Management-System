@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Add Member - Library MS{% endblock %}
+{% block content %}
+    <h1>Register New Member</h1>
+
+    <form method="post" class="form">
+        <label>Full Name
+            <input type="text" name="name" required>
+        </label>
+        <label>Email
+            <input type="email" name="email" required>
+        </label>
+        <label>Phone
+            <input type="text" name="phone">
+        </label>
+
+        <button type="submit" class="btn btn-primary">Register Member</button>
+        <a href="{{ url_for('members') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}

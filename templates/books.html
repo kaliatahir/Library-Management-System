@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Books - Library MS{% endblock %}
+{% block content %}
+    <div class="page-header">
+        <h1>Books</h1>
+        <a href="{{ url_for('add_book') }}" class="btn btn-primary">+ Add Book</a>
+    </div>
+
+    <form method="get" class="search-form">
+        <input type="text" name="q" placeholder="Search by title or author..." value="{{ query }}">
+        <button type="submit" class="btn">Search</button>
+        {% if query %}<a href="{{ url_for('books') }}" class="btn btn-secondary">Clear</a>{% endif %}
+    </form>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>ISBN</th>
+                <th>Category</th>
+                <th>Available / Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td>{{ book.title }}</td>
+                <td>{{ book.author }}</td>
+                <td>{{ book.isbn }}</td>
+                <td>{{ book.category }}</td>
+                <td>
+                    <span class="{% if book.available_copies == 0 %}text-danger{% endif %}">
+                        {{ book.available_copies }} / {{ book.total_copies }}
+                    </span>
+                </td>
+                <td class="actions">
+                    <a href="{{ url_for('edit_book', book_id=book.id) }}">Edit</a>
+                    <a href="{{ url_for('delete_book', book_id=book.id) }}"
+   class="confirm-action text-danger"
+   data-confirm-message="Delete this book? This cannot be undone.">Delete</a>
+                       
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="empty-state">No books found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
