@@ -8,7 +8,7 @@ from datetime import date, datetime, timedelta
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///library.db'
-app.config['SECRET_KEY'] = 'change-this-secret-key'
+app.config['SECRET_KEY'] = '54321'
 
 db.init_app(app)
 
