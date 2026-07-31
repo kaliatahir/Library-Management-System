@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}BookNest{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Aru Abayas{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script>
-        // Apply saved theme immediately, before the page renders, to avoid a flash
         (function() {
             const saved = localStorage.getItem('theme');
             if (saved === 'dark') {
@@ -15,21 +15,29 @@
     </script>
 </head>
 <body>
+    <div class="promo-bar">Welcome to Aru Abayas — Elegance in Every Drape</div>
+
     <nav class="navbar">
-        <div class="nav-brand">📚 BookNest</div>
+        <a href="{{ url_for('storefront') }}" class="nav-brand" style="text-decoration:none;">🖤 Aru Abayas</a>
         <div class="nav-links">
-            <a href="{{ url_for('dashboard') }}">Dashboard</a>
-            <a href="{{ url_for('books') }}">Books</a>
-            <a href="{{ url_for('members') }}">Members</a>
-            <a href="{{ url_for('issue_book') }}">Issue Book</a>
-            <a href="{{ url_for('transactions') }}">Transactions</a>
-            <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+            <a href="{{ url_for('storefront') }}">Shop</a>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('wishlist') }}">Wishlist</a>
+                <a href="{{ url_for('cart') }}">Cart</a>
+                <a href="{{ url_for('my_orders') }}">My Orders</a>
+                {% if current_user.is_admin %}
+                    <a href="{{ url_for('admin_dashboard') }}">Admin</a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('signup') }}">Sign Up</a>
+            {% endif %}
             <button id="theme-toggle" class="theme-toggle-btn" title="Toggle dark mode">🌙</button>
         </div>
     </nav>
 
     <main class="container">
-        
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -41,7 +49,6 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Reusable confirm modal -->
     <div id="confirm-modal-overlay" class="modal-overlay">
         <div class="modal-box">
             <p id="confirm-modal-message">Are you sure?</p>
@@ -51,6 +58,41 @@
             </div>
         </div>
     </div>
+
+    <footer class="site-footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="nav-brand" style="margin-bottom:10px;">🖤 Aru Abayas</div>
+                <p style="color:var(--text-muted); font-size:0.88rem; max-width:260px;">
+                    Elegant, modest wear crafted for everyday grace and special occasions.
+                </p>
+            </div>
+            <div>
+                <h4 class="footer-heading">Quick Links</h4>
+                <a href="{{ url_for('storefront') }}">Shop</a>
+                <a href="#">About Us</a>
+                <a href="#">Contact Us</a>
+            </div>
+            <div>
+                <h4 class="footer-heading">Information</h4>
+                <a href="#">Terms of Use</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Shipping / Returns</a>
+            </div>
+            <div>
+                <h4 class="footer-heading">Newsletter</h4>
+                <p style="color:var(--text-muted); font-size:0.85rem;">Get updates on new arrivals and offers.</p>
+                <form method="post" action="{{ url_for('newsletter_subscribe') }}" class="newsletter-form">
+                    <input type="email" name="email" placeholder="Your email address" required>
+                    <button type="submit" class="btn btn-gold">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2026 Aru Abayas. All Rights Reserved.</span>
+            <span class="payment-icons">Visa &nbsp; Mastercard &nbsp; PayPal &nbsp; COD</span>
+        </div>
+    </footer>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>

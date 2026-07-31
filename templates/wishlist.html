@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Wishlist - Noor Abayas{% endblock %}
+{% block content %}
+    <h1>Your Wishlist</h1>
+
+    {% if items %}
+    <div class="product-grid">
+        {% for item in items %}
+        <div class="product-card-wrap">
+            <form method="post" action="{{ url_for('toggle_wishlist', product_id=item.product.id) }}" class="wishlist-form">
+                <button type="submit" class="wishlist-btn active" title="Remove from wishlist">&#9829;</button>
+            </form>
+            <a href="{{ url_for('product_detail', product_id=item.product.id) }}" class="product-card">
+                {% if item.product.image_filename %}
+                    <img src="{{ url_for('static', filename='uploads/' + item.product.image_filename) }}" alt="{{ item.product.name }}">
+                {% else %}
+                    <div class="no-image">No Image</div>
+                {% endif %}
+                <div class="info">
+                    <div class="name">{{ item.product.name }}</div>
+                    <div class="price">₹{{ '%.2f'|format(item.product.price) }}</div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">Your wishlist is empty. <a href="{{ url_for('storefront') }}">Browse the collection</a>.</p>
+    {% endif %}
+{% endblock %}

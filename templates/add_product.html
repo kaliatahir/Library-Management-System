@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}{% if product %}Edit{% else %}Add{% endif %} Product - Noor Abayas{% endblock %}
+{% block content %}
+    <h1>{% if product %}Edit Product{% else %}Add New Product{% endif %}</h1>
+
+    <div class="form-card">
+        <form method="post" enctype="multipart/form-data" class="form">
+            <label>Name
+                <input type="text" name="name" value="{{ product.name if product else '' }}" required>
+            </label>
+            <label>Description
+                <textarea name="description">{{ product.description if product else '' }}</textarea>
+            </label>
+            <label>Price (₹)
+                <input type="number" step="0.01" min="0" name="price" value="{{ product.price if product else '' }}" required>
+            </label>
+            <label>Category
+                <input type="text" name="category" placeholder="e.g. Everyday, Occasion, Embroidered"
+                       value="{{ product.category if product else '' }}">
+            </label>
+            <label>Fabric
+                <input type="text" name="fabric" placeholder="e.g. Nida, Crepe, Chiffon"
+                       value="{{ product.fabric if product else '' }}">
+            </label>
+            <label>Color
+                <input type="text" name="color" value="{{ product.color if product else '' }}">
+            </label>
+            <label>Sizes (comma-separated)
+                <input type="text" name="sizes" placeholder="e.g. S,M,L,XL"
+                       value="{{ product.sizes if product else '' }}">
+            </label>
+            <label>Stock Quantity
+                <input type="number" min="0" name="stock" value="{{ product.stock if product else 0 }}" required>
+            </label>
+            <label>Product Image
+                <input type="file" name="image" accept=".png,.jpg,.jpeg,.webp">
+            </label>
+            <label>Or: filename already in static/uploads (e.g. image1.jpg)
+                <input type="text" name="image_filename_manual" placeholder="image1.jpg">
+            </label>
+            {% if product and product.image_filename %}
+            <img src="{{ url_for('static', filename='uploads/' + product.image_filename) }}"
+                 alt="{{ product.name }}" style="max-width:150px; border-radius:8px; margin-bottom:16px;">
+            {% endif %}
+
+            <label style="display:flex; align-items:center; gap:8px;">
+                <input type="checkbox" name="is_new_arrival" style="width:auto;" {% if product and product.is_new_arrival %}checked{% endif %}>
+                Mark as New Arrival
+            </label>
+
+            {% if product %}
+            <label style="display:flex; align-items:center; gap:8px;">
+                <input type="checkbox" name="is_active" style="width:auto;" {% if product.is_active %}checked{% endif %}>
+                Active (visible in store)
+            </label>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary">{% if product %}Save Changes{% else %}Add Product{% endif %}</button>
+            <a href="{{ url_for('admin_products') }}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}Shop - Noor Abayas{% endblock %}
+{% block content %}
+<div class="shop-layout">
+    <aside class="filter-sidebar">
+        <h3 class="filter-title">Filter</h3>
+
+        <form method="get" id="filterForm">
+            {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+
+            <div class="filter-group">
+                <div class="filter-group-title">Category</div>
+                <label class="filter-check">
+                    <input type="radio" name="category" value="" {% if not selected_category %}checked{% endif %} onchange="this.form.submit()">
+                    All
+                </label>
+                {% for c in categories %}
+                <label class="filter-check">
+                    <input type="radio" name="category" value="{{ c }}" {% if c == selected_category %}checked{% endif %} onchange="this.form.submit()">
+                    {{ c }}
+                </label>
+                {% endfor %}
+            </div>
+
+            <div class="filter-group">
+                <div class="filter-group-title">Color</div>
+                {% for color, count in color_counts.items() %}
+                <label class="filter-check">
+                    <input type="checkbox" name="color" value="{{ color }}"
+                           {% if color in selected_colors %}checked{% endif %} onchange="this.form.submit()">
+                    {{ color }} <span class="filter-count">{{ count }}</span>
+                </label>
+                {% endfor %}
+            </div>
+
+            <input type="hidden" name="sort" value="{{ sort }}">
+            <input type="hidden" name="show" value="{{ show }}">
+        </form>
+    </aside>
+
+    <div class="shop-main">
+        <div class="page-header">
+            <h1>Abayas</h1>
+        </div>
+
+        <form method="get" class="search-form">
+            {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+            {% for c in selected_colors %}<input type="hidden" name="color" value="{{ c }}">{% endfor %}
+            <input type="text" name="q" placeholder="Search abayas..." value="{{ query }}">
+            <select name="sort" onchange="this.form.submit()">
+                <option value="default" {% if sort == 'default' %}selected{% endif %}>Sort By: Default</option>
+                <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                <option value="name" {% if sort == 'name' %}selected{% endif %}>Name: A-Z</option>
+            </select>
+            <select name="show" onchange="this.form.submit()">
+                <option value="15" {% if show == '15' %}selected{% endif %}>Show: 15</option>
+                <option value="30" {% if show == '30' %}selected{% endif %}>Show: 30</option>
+                <option value="all" {% if show == 'all' %}selected{% endif %}>Show: All</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Search</button>
+            {% if query or selected_category or selected_colors %}<a href="{{ url_for('storefront') }}" class="btn btn-secondary">Clear</a>{% endif %}
+        </form>
+
+        <div class="grid-view-toggle">
+            <span>Grid View:</span>
+            <button type="button" class="grid-toggle-btn" data-cols="2">2</button>
+            <button type="button" class="grid-toggle-btn active" data-cols="3">3</button>
+            <button type="button" class="grid-toggle-btn" data-cols="4">4</button>
+        </div>
+
+        {% if products %}
+        <div class="product-grid" id="productGrid">
+            {% for product in products %}
+            <div class="product-card-wrap">
+                {% if current_user.is_authenticated %}
+                <form method="post" action="{{ url_for('toggle_wishlist', product_id=product.id) }}" class="wishlist-form">
+                    <button type="submit" class="wishlist-btn {% if product.id in wishlist_ids %}active{% endif %}" title="Wishlist">
+                        {% if product.id in wishlist_ids %}&#9829;{% else %}&#9825;{% endif %}
+                    </button>
+                </form>
+                {% endif %}
+
+                <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-card">
+                    {% if product.is_new_arrival %}<span class="ribbon">New Arrival</span>{% endif %}
+                    {% if not product.in_stock %}<span class="ribbon ribbon-sold">Sold Out</span>{% endif %}
+
+                    {% if product.image_filename %}
+                        <img src="{{ url_for('static', filename='uploads/' + product.image_filename) }}" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="no-image">No Image</div>
+                    {% endif %}
+
+                    <div class="hover-overlay">
+                        <span class="btn btn-gold">{% if product.in_stock %}View & Add to Cart{% else %}Sold Out{% endif %}</span>
+                    </div>
+
+                    <div class="info">
+                        <div class="name">{{ product.name }}</div>
+                        <div class="price">₹{{ '%.2f'|format(product.price) }}</div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-state">No abayas found.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.grid-toggle-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+        document.querySelectorAll('.grid-toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('productGrid').style.gridTemplateColumns =
+            'repeat(' + btn.dataset.cols + ', 1fr)';
+    });
+});
+</script>
+{% endblock %}

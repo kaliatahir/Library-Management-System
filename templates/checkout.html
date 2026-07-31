@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Checkout - Noor Abayas{% endblock %}
+{% block content %}
+    <h1>Checkout</h1>
+
+    <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:40px; align-items:start;">
+        <div class="form-card">
+            <form method="post" class="form">
+                <label>Shipping Address
+                    <textarea name="address" required>{{ current_user.address or '' }}</textarea>
+                </label>
+                <label>Phone Number
+                    <input type="tel" name="phone" value="{{ current_user.phone or '' }}" required>
+                </label>
+                <label>Payment Method
+                    <input type="text" value="Cash on Delivery" disabled>
+                </label>
+                <button type="submit" class="btn btn-gold btn-block">Place Order</button>
+            </form>
+        </div>
+
+        <div>
+            <h3 style="margin-top:0;">Order Summary</h3>
+            {% for item in items %}
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); font-size:0.9rem;">
+                <span>{{ item.product.name }} {% if item.size %}({{ item.size }}){% endif %} x{{ item.quantity }}</span>
+                <span>₹{{ '%.2f'|format(item.subtotal) }}</span>
+            </div>
+            {% endfor %}
+            <div class="cart-summary" style="border-top:2px solid var(--border);">
+                <span class="cart-total">Total: ₹{{ '%.2f'|format(total) }}</span>
+            </div>
+        </div>
+    </div>
+{% endblock %}

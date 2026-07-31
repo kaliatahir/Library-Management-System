@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} - Noor Abayas{% endblock %}
+{% block content %}
+    <a href="{{ url_for('storefront') }}" class="btn btn-secondary" style="margin-bottom:20px;">&larr; Back to Shop</a>
+
+    <div class="product-detail">
+        <div>
+            {% if product.image_filename %}
+                <img src="{{ url_for('static', filename='uploads/' + product.image_filename) }}" alt="{{ product.name }}">
+            {% else %}
+                <div class="no-image">No Image</div>
+            {% endif %}
+        </div>
+        <div>
+            <h1>{{ product.name }}</h1>
+            <div class="price-tag">₹{{ '%.2f'|format(product.price) }}</div>
+
+            <div class="product-meta">
+                {% if product.category %}<span><strong>Category:</strong> {{ product.category }}</span>{% endif %}
+                {% if product.fabric %}<span><strong>Fabric:</strong> {{ product.fabric }}</span>{% endif %}
+                {% if product.color %}<span><strong>Color:</strong> {{ product.color }}</span>{% endif %}
+                <span><strong>Availability:</strong>
+                    {% if product.in_stock %}{{ product.stock }} in stock{% else %}<span class="text-danger">Out of stock</span>{% endif %}
+                </span>
+            </div>
+
+            {% if product.description %}
+            <p>{{ product.description }}</p>
+            {% endif %}
+
+            {% if product.in_stock %}
+                {% if current_user.is_authenticated %}
+                <form method="post" action="{{ url_for('add_to_cart', product_id=product.id) }}" class="form" style="max-width:300px;">
+                    {% if product.size_list %}
+                    <label>Size
+                        <select name="size" required>
+                            {% for size in product.size_list %}
+                            <option value="{{ size }}">{{ size }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    {% endif %}
+                    <label>Quantity
+                        <input type="number" name="quantity" min="1" max="{{ product.stock }}" value="1" required>
+                    </label>
+                    <button type="submit" class="btn btn-gold btn-block">Add to Cart</button>
+                </form>
+                {% else %}
+                <a href="{{ url_for('login', next=request.path) }}" class="btn btn-gold">Login to Purchase</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

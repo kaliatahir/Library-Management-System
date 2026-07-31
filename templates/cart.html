@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Your Cart - Noor Abayas{% endblock %}
+{% block content %}
+    <h1>Your Cart</h1>
+
+    {% if items %}
+        {% for item in items %}
+        <div class="cart-item">
+            {% if item.product.image_filename %}
+                <img src="{{ url_for('static', filename='uploads/' + item.product.image_filename) }}" alt="{{ item.product.name }}">
+            {% else %}
+                <div class="no-image"></div>
+            {% endif %}
+            <div class="details">
+                <div style="font-weight:700;">{{ item.product.name }}</div>
+                {% if item.size %}<div style="color:var(--text-muted); font-size:0.85rem;">Size: {{ item.size }}</div>{% endif %}
+                <div style="color:var(--gold); font-weight:700;">₹{{ '%.2f'|format(item.product.price) }}</div>
+            </div>
+            <form method="post" action="{{ url_for('update_cart_item', item_id=item.id) }}">
+                <input type="number" name="quantity" value="{{ item.quantity }}" min="0" max="{{ item.product.stock }}"
+                       onchange="this.form.submit()">
+            </form>
+            <div style="min-width:80px; text-align:right; font-weight:700;">₹{{ '%.2f'|format(item.subtotal) }}</div>
+            <a href="{{ url_for('remove_from_cart', item_id=item.id) }}"
+               class="confirm-action text-danger"
+               data-confirm-message="Remove this item from your cart?">Remove</a>
+        </div>
+        {% endfor %}
+
+        <div class="cart-summary">
+            <span class="cart-total">Total: ₹{{ '%.2f'|format(total) }}</span>
+            <a href="{{ url_for('checkout') }}" class="btn btn-gold">Proceed to Checkout</a>
+        </div>
+    {% else %}
+        <p class="empty-state">Your cart is empty. <a href="{{ url_for('storefront') }}">Continue shopping</a>.</p>
+    {% endif %}
+{% endblock %}

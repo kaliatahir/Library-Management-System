@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Manage Orders - Noor Abayas{% endblock %}
+{% block content %}
+    <h1>Manage Orders</h1>
+
+    <form method="get" class="search-form">
+        <select name="status" onchange="this.form.submit()">
+            <option value="">All Statuses</option>
+            {% for s in ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'] %}
+            <option value="{{ s }}" {% if s == status_filter %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+        </select>
+        {% if status_filter %}<a href="{{ url_for('admin_orders') }}" class="btn btn-secondary">Clear</a>{% endif %}
+    </form>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Update</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td><a href="{{ url_for('order_detail', order_id=order.id) }}">#{{ order.id }}</a></td>
+                <td>{{ order.customer.username }}</td>
+                <td>{{ order.order_date.strftime('%d %b %Y') }}</td>
+                <td>₹{{ '%.2f'|format(order.total_amount) }}</td>
+                <td>
+                    {% if order.status == 'Delivered' %}<span class="badge badge-success">{{ order.status }}</span>
+                    {% elif order.status == 'Cancelled' %}<span class="badge badge-danger">{{ order.status }}</span>
+                    {% elif order.status == 'Pending' %}<span class="badge badge-warning">{{ order.status }}</span>
+                    {% else %}<span class="badge badge-info">{{ order.status }}</span>{% endif %}
+                </td>
+                <td>
+                    <form method="post" action="{{ url_for('update_order_status', order_id=order.id) }}" style="display:flex; gap:6px;">
+                        <select name="status">
+                            {% for s in ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'] %}
+                            <option value="{{ s }}" {% if s == order.status %}selected{% endif %}>{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-primary" style="padding:6px 12px;">Update</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="empty-state">No orders found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

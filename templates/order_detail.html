@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.id }} - Noor Abayas{% endblock %}
+{% block content %}
+    <h1>Order #{{ order.id }}</h1>
+    <p style="color:var(--text-muted);">Placed on {{ order.order_date.strftime('%d %b %Y, %I:%M %p') }}</p>
+
+    <table class="data-table" style="margin-bottom:24px;">
+        <thead>
+            <tr><th>Product</th><th>Size</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr>
+        </thead>
+        <tbody>
+            {% for item in order.items %}
+            <tr>
+                <td>{{ item.product_name }}</td>
+                <td>{{ item.size or '—' }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>₹{{ '%.2f'|format(item.price_at_purchase) }}</td>
+                <td>₹{{ '%.2f'|format(item.subtotal) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="form-card">
+        <p><strong>Status:</strong> {{ order.status }}</p>
+        <p><strong>Payment Method:</strong> {{ order.payment_method }}</p>
+        <p><strong>Shipping Address:</strong> {{ order.shipping_address }}</p>
+        <p><strong>Phone:</strong> {{ order.shipping_phone }}</p>
+        <p style="font-size:1.2rem; font-weight:800;">Total: ₹{{ '%.2f'|format(order.total_amount) }}</p>
+    </div>
+{% endblock %}
